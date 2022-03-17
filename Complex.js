@@ -33,7 +33,7 @@ class Complex {
         this.im = im;
         this.mod = Math.sqrt(re**2 + im**2)
         this.arg = Math.atan2(im, re)
-        this.argamop = this.arg / Math.PI // Argument as multiple of pi
+        this.argitop = this.arg / Math.PI // Argument as multiple of pi
     }
 
     // Functions that modify this instance:
@@ -57,7 +57,7 @@ class Complex {
         this.re = this.mod * Math.cos(newArg)
         this.im = this.mod * Math.sin(newArg)
         this.arg = newArg
-        this.argamop = newArg / Math.PI
+        this.argitop = newArg / Math.PI
     }
 
     // Functions that don't modify this instance:
@@ -70,7 +70,7 @@ class Complex {
     multiplyBy(otherNum) {
         let newNum = new Complex()
         newNum.setMod(this.mod * otherNum.mod)
-        newNum.setArg((this.argamop + otherNum.argamop) * Math.PI)
+        newNum.setArg((this.argitop + otherNum.argitop) * Math.PI)
         return newNum;
     }
 
@@ -83,7 +83,7 @@ class Complex {
     divideBy(otherNum) {
         let newNum = new Complex()
         newNum.setMod(this.mod / otherNum.mod)
-        newNum.setArg((this.argamop - otherNum.argamop) * Math.PI)
+        newNum.setArg((this.argitop - otherNum.argitop) * Math.PI)
         return newNum;
     }
 
@@ -118,5 +118,190 @@ class Complex {
         newNum.setMod(this.mod ** power)
         newNum.setArg(this.arg *= power)
         return newNum
+    }
+
+    /**
+     * Converts the complex number to a human-readable format
+     * @param {String} form Optional. Form to return the complex number as: cartesian, modArg, modArgitop, euler, euleritop.
+     * Append 'S' to get simplified version.
+     * Empty input returns simplified cartesian form.
+     * @returns String
+     */
+    toString(form="cartesianS") {
+        if (this.mod == 0) {
+            // Mod is 0
+            return '0'
+        }
+        switch (form) {
+
+            // Cartesian Form
+            case "cartesian":
+                return `${this.re} + ${this.im}i`
+            case "cartesianS":
+                if (this.re == 0) {
+                    // Re is 0
+                    if (this.im == 0) {
+                        // Re is 0, Im is 0
+                        return `0`
+                    }
+                    else if (this.im == 1) {
+                        // Re is 0, Im is 1
+                        return `i`
+                    }
+                    else {
+                        // Re is 0, Im is neither 0 nor 1
+                        return `${this.im}i`
+                    }
+                }
+                else {
+                    // Re is not 0
+                    if (this.im == 0) {
+                        // Re is not 0, Im is 0
+                        return `${this.re}`
+                    }
+                    else if (this.im == 1) {
+                        // Re is not 0, Im is 1
+                        return `${this.re} + i`
+                    }
+                    else if (this.im == -1) {
+                        // Re is not 0, Im is -1
+                        return `${this.re} - i`
+                    }
+                    else if (this.im < 0) {
+                        // Re is not 0, Im is negative
+                        return `${this.re} - ${Math.abs(this.im)}i`
+                    }
+                    else {
+                        // Re is not 0, Im is neither 0 nor 1 nor -1 nor < 0
+                        return `${this.re} + ${this.im}i`
+                    }
+                }
+            
+            // Modulus-Argument / Polar Form
+            case "modArg":
+                return `${this.mod}(cos(${this.arg}) + isin(${this.arg}))`;
+
+            case "modArgS":
+                if (this.mod == 1) {
+                    // Mod is 1
+                    return `cos(${this.arg}) + isin(${this.arg})`;
+                }
+                else {
+                    // Mod is not 1
+                    return `${this.mod}(cos(${this.arg}) + isin(${this.arg}))`;
+                }
+            
+            case "modArgitop":
+                return `${this.mod}(cos(${this.argitop}π) + isin(${this.argitop}π))`;
+
+            case "modArgitopS":
+                if (this.mod == 1) {
+                    // Mod is 1
+                    if (this.argitop == 1) {
+                        return `cos(π) + isin(π)`;
+                    }
+                    else if (this.argitop == -1) {
+                        return `cos(-π) + isin(-π)`;
+                    }
+                    else if (this.argitop == 0) {
+                        return `cos(0) + isin(0)`;
+                    }
+                    else {
+                        return `cos(${this.argitop}π) + isin(${this.argitop}π)`;
+                    }
+                }
+                else {
+                    // Mod is not 1
+                    if (this.argitop == 1) {
+                        return `${this.mod}(cos(π) + isin(π))`;
+                    }
+                    else if (this.argitop == -1) {
+                        return `${this.mod}(cos(-π) + isin(-π))`;
+                    }
+                    else if (this.argitop == 0) {
+                        return `${this.mod}(cos(0) + isin(0))`;
+                    }
+                    else {
+                        return `${this.mod}(cos(${this.argitop}π) + isin(${this.argitop}π))`;
+                    }
+                }
+
+            // Euler Form
+            case "euler":
+                return `${this.mod}e^(${this.arg}i)`;
+
+            case "eulerS":
+                if (this.mod == 1) {
+                    // Mod is 1
+                    if (this.arg == 1) {
+                        return `e^i`;
+                    }
+                    else if (this.arg == -1) {
+                        return `e^(-i)`
+                    }
+                    else if (this.arg == 0) {
+                        return `e^0`
+                    }
+                    else {
+                        // Arg is not 1
+                        return `e^(${this.arg}i)`;
+                    }
+                }
+                else {
+                    // Mod is not 1
+                    if (this.arg == 1) {
+                        // Arg is 1
+                        return `${this.mod}e^i`;
+                    }
+                    else if (this.arg == -1) {
+                        return `${this.mod}e^(-i)`
+                    }
+                    else if (this.arg == 0) {
+                        return `${this.mod}e^0`
+                    }
+                    else {
+                        // Arg is not 1
+                        return `${this.mod}e^(${this.arg}i)`;
+                    }
+                }
+
+            case "euleritop":
+                return `${this.mod}e^(${this.argitop}πi)`;
+            case "euleritopS":
+                if (this.mod == 1) {
+                    // Mod is 1
+                    if (this.argitop == 1) {
+                        // Argitop is 1
+                        return `e^(πi)`;
+                    }
+                    else if (this.argitop == -1) {
+                        return `e^(-πi)`
+                    }
+                    else if (this.argitop == 0) {
+                        return `e^0`
+                    }
+                    else {
+                        // Argitop is not 1
+                        return `e^(${this.argitop}πi)`;
+                    }
+                }
+                else {
+                    // Mod is not 1
+                    if (this.argitop == 1) {
+                        // Argitop is 1
+                        return `${this.mod}e^(πi)`;
+                    }
+                    else if (this.argitop == -1) {
+                        return `${this.mod}e^(-πi)`
+                    }
+                    else if (this.argitop == 0) {
+                        return `${this.mod}e^0`
+                    }
+                    else {
+                        // Argitop is not 1
+                        return `${this.mod}e^(${this.argitop}πi)`;
+                    }
+                }
+        }
     }
 }
